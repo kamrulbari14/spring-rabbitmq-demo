@@ -12,10 +12,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-
 /**
  * This class is for the dynamic configuration of RabbitMQ queues. It creates Queues dynamically
- * which are mentioned in the application.properties file
+ * which are mentioned in the application.properties file.
  */
 @Configuration
 @RequiredArgsConstructor
@@ -29,11 +28,22 @@ public class RabbitMQConfig {
   @Value("${rabbitmq.queues}")
   private String[] queueNames;
 
+  /**
+   * Creates a DirectExchange with the name specified in the application properties.
+   *
+   * @return a DirectExchange instance
+   */
   @Bean
   public DirectExchange exchange() {
     return new DirectExchange(exchangeName);
   }
 
+  /**
+   * Creates and registers queues dynamically based on the queue names specified in the application
+   * properties.
+   *
+   * @return a map of queue names to Queue instances
+   */
   @Bean
   public Map<String, Queue> queues() {
     Map<String, Queue> queues = new HashMap<>();
@@ -43,6 +53,13 @@ public class RabbitMQConfig {
     return queues;
   }
 
+  /**
+   * Creates and registers bindings dynamically, associating each queue with a routing key and the
+   * exchange.
+   *
+   * @param exchange the DirectExchange to bind the queues to
+   * @return a map of queue names to Binding instances
+   */
   @Bean
   public Map<String, Binding> bindings(DirectExchange exchange) {
     Map<String, Binding> bindings = new HashMap<>();
